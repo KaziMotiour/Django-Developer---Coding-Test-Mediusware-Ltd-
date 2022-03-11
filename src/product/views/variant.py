@@ -1,41 +1,41 @@
 from django.views import generic
-from django.views.generic import ListView, CreateView, UpdateView
-
-from product.forms import VariantForm
-from product.models import Variant
-
-
-class BaseVariantView(generic.View):
-    form_class = VariantForm
-    model = Variant
-    template_name = 'variants/create.html'
-    success_url = '/product/variants'
+from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import render
+from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView, RetrieveAPIView
+from rest_framework.response import Response
+from ..serializers import StandardResultsSetPagination, VarientSerializers, ProductSerializers, ProuctImageSerializers, ProductVariantSerializers, ProductVariantPriceSerializers, ProductListAPiView
+from ..models import Variant, Product, ProductImage, ProductVariant, ProductVariantPrice
 
 
-class VariantView(BaseVariantView, ListView):
-    template_name = 'variants/list.html'
-    paginate_by = 10
-
-    def get_queryset(self):
-        filter_string = {}
-        print(self.request.GET)
-        for key in self.request.GET:
-            if self.request.GET.get(key):
-                filter_string[key] = self.request.GET.get(key)
-        return Variant.objects.filter(**filter_string)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['product'] = True
-        context['request'] = ''
-        if self.request.GET:
-            context['request'] = self.request.GET['title__icontains']
-        return context
+@api_view(['GET'])
+def getProductVariants(request):
+    color_variant=Variant.objects.all()
+    all_variant=dict()
+    tempo = set()
+    for variant in color_variant:
+        
+        product_variant = ProductVariant.objects.filter(variant=variant).distinct()
+        
+        for vari in product_variant:
+           print(vari.variant_title)
+           tempo.add(vari.variant_title)
+           all_variant[variant.title]=tempo
+        tempo=set()
+    print(all_variant)
+    return Response(all_variant)
 
 
-class VariantCreateView(BaseVariantView, CreateView):
-    pass
+class GetVariants(ListAPIView):
+    
+    serializer_class = VarientSerializers
+    queryset = Variant.objects.all()
+
+class VariantCreateApiView(CreateAPIView):
+    # permission_classes=[IsAuthenticated, ]
+    serializer_class = VarientSerializers
+    queryset = Variant.objects.all()
 
 
-class VariantEditView(BaseVariantView, UpdateView):
-    pk_url_kwarg = 'id'

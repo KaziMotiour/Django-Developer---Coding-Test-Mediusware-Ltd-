@@ -15,9 +15,9 @@ const CreateProduct = (props) => {
         }
     ])
     console.log(typeof props.variants)
-    // handle click event of the Add button
+  // handle click event of the Add button
     const handleAddClick = () => {
-        let all_variants = JSON.parse(props.variants.replaceAll("'", '"')).map(el => el.id)
+        let all_variants =props.variants && JSON.parse(props.variants.replaceAll("'", '"')).map(el => el.id)
         let selected_variants = productVariants.map(el => el.option);
         let available_variants = all_variants.filter(entry1 => !selected_variants.some(entry2 => entry1 == entry2))
         setProductVariant([...productVariants, {
