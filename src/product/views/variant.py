@@ -20,11 +20,9 @@ def getProductVariants(request):
         product_variant = ProductVariant.objects.filter(variant=variant).distinct()
         
         for vari in product_variant:
-           print(vari.variant_title)
            tempo.add(vari.variant_title)
            all_variant[variant.title]=tempo
         tempo=set()
-    print(all_variant)
     return Response(all_variant)
 
 
