@@ -1,4 +1,5 @@
 # Django-Developer---Coding-Test-Mediusware-Ltd-
+## This project has divided into two part   backend/server-side(django) and frontend/client-side(react)
 
 ## Back-end
 ### To run the backenc/server-site please follow the command bellow
